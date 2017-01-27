@@ -113,9 +113,10 @@ The fingerprint methods are platform independent, producing the same results for
 
 Returns a Number containing the 32-bit unsigned integer fingerprint value of `input`.
 
-#### fingerprint64(input)
+#### fingerprint64(input, hex)
 
 * `input` is the Buffer or String to fingerprint.
+* `hex` is an optional boolean argument which, when true, causes the result to be hex instead of decimal.
 
 Returns a String representing the 64-bit unsigned integer fingerprint value of `input`.
 

@@ -12,6 +12,14 @@ std::string Uint64ToString(const T& t) {
   return ss.str();
 }
 
+// Convert uint64_t to string via stream
+template <typename T>
+std::string Uint64ToHexString(const T& t) {
+  std::ostringstream ss;
+  ss << std::hex << t;
+  return ss.str();
+}
+
 // Hash methods - platform dependent
 
 NAN_METHOD(Hash32Buffer) {
@@ -115,11 +123,25 @@ NAN_METHOD(Fingerprint64Buffer) {
   info.GetReturnValue().Set(Nan::New(Uint64ToString(hash)).ToLocalChecked());
 }
 
+NAN_METHOD(Fingerprint64BufferHex) {
+  Nan::HandleScope();
+  v8::Local<v8::Object> buffer = info[0].As<v8::Object>();
+  uint64_t hash = util::Fingerprint64(node::Buffer::Data(buffer), node::Buffer::Length(buffer));
+  info.GetReturnValue().Set(Nan::New(Uint64ToHexString(hash)).ToLocalChecked());
+}
+
 NAN_METHOD(Fingerprint64String) {
   Nan::HandleScope();
   std::string input = *Nan::Utf8String(info[0]);
   uint64_t hash = util::Fingerprint64(input);
   info.GetReturnValue().Set(Nan::New(Uint64ToString(hash)).ToLocalChecked());
+}
+
+NAN_METHOD(Fingerprint64StringHex) {
+  Nan::HandleScope();
+  std::string input = *Nan::Utf8String(info[0]);
+  uint64_t hash = util::Fingerprint64(input);
+  info.GetReturnValue().Set(Nan::New(Uint64ToHexString(hash)).ToLocalChecked());
 }
 
 // Init
@@ -153,6 +175,10 @@ NAN_MODULE_INIT(init) {
     Nan::GetFunction(Nan::New<v8::FunctionTemplate>(Fingerprint64Buffer)).ToLocalChecked());
   Nan::Set(target, Nan::New("Fingerprint64String").ToLocalChecked(),
     Nan::GetFunction(Nan::New<v8::FunctionTemplate>(Fingerprint64String)).ToLocalChecked());
+  Nan::Set(target, Nan::New("Fingerprint64BufferHex").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(Fingerprint64BufferHex)).ToLocalChecked());
+  Nan::Set(target, Nan::New("Fingerprint64StringHex").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(Fingerprint64StringHex)).ToLocalChecked());
 }
 
 #ifdef FARMHASH_LEGACY
