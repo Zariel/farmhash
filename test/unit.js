@@ -91,6 +91,9 @@ assert.throws(function () {
 const fingerprint64 = farmhash.fingerprint64(input);
 assert.strictEqual('string', typeof fingerprint64);
 assert.strictEqual('17097846426514660294', fingerprint64);
+var fingerprint64Hex = farmhash.fingerprint64(input, true);
+assert.strictEqual('string', typeof fingerprint64Hex);
+assert.strictEqual('ed47c0bc94969bc6', fingerprint64Hex);
 
 // https://github.com/lovell/farmhash/issues/26
 assert.strictEqual('16905089972579912905', farmhash.fingerprint64('1footrue'));

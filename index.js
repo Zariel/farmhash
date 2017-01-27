@@ -70,12 +70,12 @@ module.exports = {
     }
     throw new Error('Expected a String or Buffer for input');
   },
-  fingerprint64: function (input) {
+  fingerprint64: function (input, hex) {
     if (typeof input === 'string') {
-      return farmhash.Fingerprint64String(input);
+      return hex ? farmhash.Fingerprint64StringHex(input) : farmhash.Fingerprint64String(input);
     }
     if (Buffer.isBuffer(input)) {
-      return farmhash.Fingerprint64Buffer(input);
+      return hex ? farmhash.Fingerprint64BufferHex(input) : farmhash.Fingerprint64Buffer(input);
     }
     throw new Error('Expected a String or Buffer for input');
   }

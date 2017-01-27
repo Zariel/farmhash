@@ -14,6 +14,15 @@
 
 #include <napi.h>
 #include "upstream/farmhash.h"
+#include <sstream>
+
+// Convert uint64_t to string via stream
+template <typename T>
+std::string Uint64ToHexString(const T& t) {
+  std::ostringstream ss;
+  ss << std::hex << t;
+  return ss.str();
+}
 
 // Hash methods - platform dependent
 
@@ -125,6 +134,20 @@ Napi::Value Fingerprint64String(const Napi::CallbackInfo& info) {
   return Napi::String::New(env, std::to_string(hash));
 }
 
+Napi::Value Fingerprint64BufferHex(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  Napi::Buffer<char> buffer = info[0].As<Napi::Buffer<char>>();
+  uint64_t hash = util::Fingerprint64(buffer.Data(), buffer.ByteLength());
+  return Napi::String::New(env, Uint64ToHexString(hash));
+}
+
+Napi::Value Fingerprint64StringHex(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  std::string input = info[0].As<Napi::String>().Utf8Value();
+  uint64_t hash = util::Fingerprint64(input);
+  return Napi::String::New(env, Uint64ToHexString(hash));
+}
+
 // Init
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
@@ -142,6 +165,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "Fingerprint32String"), Napi::Function::New(env, Fingerprint32String));
   exports.Set(Napi::String::New(env, "Fingerprint64Buffer"), Napi::Function::New(env, Fingerprint64Buffer));
   exports.Set(Napi::String::New(env, "Fingerprint64String"), Napi::Function::New(env, Fingerprint64String));
+  exports.Set(Napi::String::New(env, "Fingerprint64BufferHex"), Napi::Function::New(env, Fingerprint64BufferHex));
+  exports.Set(Napi::String::New(env, "Fingerprint64StringHex"), Napi::Function::New(env, Fingerprint64StringHex));
   return exports;
 }
 
