@@ -1,8 +1,8 @@
 /*jslint node: true */
 'use strict';
 
-var farmhash = require('./build/Release/farmhash');
-var farmhashLegacy = require('./build/Release/farmhash-legacy');
+var farmhash = require('./build/Debug/farmhash');
+var farmhashLegacy = require('./build/Debug/farmhash-legacy');
 
 // Input validation
 var verifyInteger = function(input) {
