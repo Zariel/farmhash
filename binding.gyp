@@ -1,10 +1,5 @@
 {
-  'targets': [{
-    'target_name': 'farmhash',
-    'sources': [
-       'src/upstream/farmhash.cc',
-       'src/bindings.cc'
-    ],
+  'target_defaults': {
     'include_dirs': [
       '<!(node -e "require(\'nan\')")'
     ],
@@ -21,17 +16,29 @@
           'FARMHASH_OPTIONAL_BUILTIN_EXPECT'
         ]
       }],
-      ['target_arch!="arm"', {
+      ['not "arm" in target_arch', {
         'cflags_cc': [
           '-march=native'
-        ]
+        ],
+        'xcode_settings': {
+          'OTHER_CPLUSPLUSFLAGS': [
+            '-march=native',
+          ]
+        },
+      }],
+      ['OS=="mac" and target_arch == "arm64"', {
+        'xcode_settings': {
+          'OTHER_CPLUSPLUSFLAGS': [
+            '-mcpu=apple-m1',
+          ]
+        },
+
       }]
     ],
     'xcode_settings': {
       'OTHER_CPLUSPLUSFLAGS': [
         '-fexceptions',
         '-Wall',
-        '-march=native',
         '-Ofast',
         '-funroll-loops'
       ]
@@ -45,6 +52,13 @@
         }
       }
     }
+  },
+  'targets': [{
+    'target_name': 'farmhash',
+    'sources': [
+       'src/upstream/farmhash.cc',
+       'src/bindings.cc'
+    ],
   }, {
     'target_name': 'farmhash-legacy',
     'defines': [
@@ -54,45 +68,6 @@
        'src/upstream/farmhash-legacy.cc',
        'src/bindings.cc'
     ],
-    'include_dirs': [
-      '<!(node -e "require(\'nan\')")'
-    ],
-    'cflags_cc': [
-        '-fexceptions',
-        '-Wall',
-        '-Ofast',
-        '-flto',
-        '-funroll-loops'
-    ],
-    'conditions': [
-      ['OS=="win"', {
-        'defines': [
-          'FARMHASH_OPTIONAL_BUILTIN_EXPECT'
-        ]
-      }],
-      ['target_arch!="arm"', {
-        'cflags_cc': [
-          '-march=native'
-        ]
-      }]
-    ],
-    'xcode_settings': {
-      'OTHER_CPLUSPLUSFLAGS': [
-        '-fexceptions',
-        '-Wall',
-        '-march=native',
-        '-Ofast',
-        '-funroll-loops'
-      ]
-    },
-    'configurations': {
-      'Release': {
-        'msvs_settings': {
-          'VCCLCompilerTool': {
-            'ExceptionHandling': 1,
-          }
-        }
-      }
-    }
-  }]
+  },
+  ]
 }
